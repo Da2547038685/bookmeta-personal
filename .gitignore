@@ -17,3 +17,7 @@ dist/
 build/
 *.spec
 *.log
+
+# --- allow placeholder files under ignored dirs ---
+!data/.gitkeep
+!data/covers/.gitkeep
