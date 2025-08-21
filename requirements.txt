@@ -1,0 +1,16 @@
+# Core
+requests>=2.31.0
+beautifulsoup4>=4.12.3
+lxml>=5.2.1
+pydantic>=2.7.0
+sqlalchemy>=2.0.29
+alembic>=1.13.1
+rapidfuzz>=3.6.1
+watchdog>=4.0.0
+python-slugify>=8.0.4
+
+# UI
+streamlit>=1.36.0
+
+# Optional (enable Douban/JD via Playwright later)
+playwright>=1.44.0

@@ -1,0 +1,49 @@
+name: Build Windows EXE
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+          pip install -U pyinstaller
+
+      - name: PyInstaller (onedir)
+        run: |
+          pyinstaller ^
+            --noconfirm ^
+            --clean ^
+            --name BookMeta ^
+            --onedir ^
+            --add-data "ui;ui" ^
+            --add-data "app;app" ^
+            --add-data "data;data" ^
+            --add-data "samples;samples" ^
+            --add-data "README.md;." ^
+            --collect-all streamlit ^
+            --collect-all sqlalchemy ^
+            --collect-all bs4 ^
+            --collect-all lxml ^
+            main.py
+
+      - name: Copy extras
+        run: |
+          if exist .env.example copy .env.example dist\BookMeta\.env.example
+          if exist README.md copy README.md dist\BookMeta\README.md
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BookMeta-win
+          path: dist/BookMeta
