@@ -1,0 +1,45 @@
+name: Build Windows Desktop EXE
+
+on:
+  workflow_dispatch:   # 手动触发
+  push:
+    branches: [ main ] # 或改成你常用的分支
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+          pip install PySide6 pyinstaller
+
+      - name: PyInstaller (onedir)
+        shell: cmd
+        run: |
+          pyinstaller ^
+            --noconfirm ^
+            --clean ^
+            --name BookMetaDesktop ^
+            --onedir ^
+            --noconsole ^
+            --collect-all PySide6 ^
+            --add-data "app;app" ^
+            --add-data "data;data" ^
+            --add-data "samples;samples" ^
+            --add-data "README.md;." ^
+            app\desktop\main_qt.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BookMetaDesktop-win
+          path: dist/BookMetaDesktop
